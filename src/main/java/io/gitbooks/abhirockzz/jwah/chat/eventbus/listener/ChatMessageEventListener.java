@@ -8,10 +8,6 @@ import io.gitbooks.abhirockzz.jwah.chat.model.Reply;
 import java.util.function.Predicate;
 import javax.websocket.Session;
 
-/**
- *
- * @author agupgupt
- */
 public class ChatMessageEventListener implements MessageListener<ChatMessage> {
 
     @Override
