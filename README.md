@@ -23,14 +23,14 @@ Here is what you can do with the chat application
 - Send public messages
 - Send private messages
 - Get notified about new users joining
-- Leave the chat room
+- Leave the chat room (logout)
 - Get notified another user leaves the chat room
 
 > All these work no matter which node the user is connected to
 
 ## Scaling the application
 
-This section gives you quick background, talks about the actual problem and the solution. 
+This section gives you a quick background, talks about the actual problem and the solution. 
 
 > Although some of the concepts have been discussed in the context of this application, they are generally applicable for WebSocket applications in general (specially the ones which use the Java WebSocket API)
 
@@ -59,7 +59,7 @@ A (potential) solution is to have the notification and messaging (broadcasting i
 - the internal `ChatServer` logic delegates to this topic rather than directly interacting with `Session` to broadcast to associated clients - it does so by **publishing** events to it
 - there are associated **topic listeners** for each topic (on every node) which react to published events and execute the actual broadcasting feature
 
-> A note on High availability & fault tolerance
+> **A note on High availability & fault tolerance**
 > It's very important to understand that this does not help with HA of the WebSocket sessions/connections. As mentioned earlier, a `Session` object is not `Serializable` - hence a client once disconnected, has to connect again. It is possible to partially implement HA/fault tolerant session management - but that's not in scope for this project  
 
 ## Code
@@ -71,11 +71,10 @@ Before you explore the source code yourself, here is quick overview
 |`ChatServer`|Core|It contains the core business logic of the application|
 |`WebSocketServerManager`|Bootstrap|Manages bootstrap and shutdown process of the WebSocket container|
 |`ChatMessage`,<br>`DuplicateUserNotification`,<br>`LogOutNotification`,<br>`NewJoineeNotification`,<br>`Reply`,<br>`WelcomeMessage`|Domain objects|Simple POJOs to model the application level entities|
-|`ChatMessageDecoder`|Decoder|Converts chats sent by users into Java (domain) object which can be used within the application|
-|`DuplicateUserMessageEncoder`<br>,`LogOutMessageEncoder`,<br>`NewJoineeMessageEncoder`,<br>`ReplyEncoder`,<br>`WelcomeMessageEncoder`|Encoder(s)|Converts Java (domain) objects into native (text) payloads which can be sent over the wire using the WebSocket protocol|
 |`ChatEventBus`|Events|Central place for handling Topic based inter-node communication|
 |`ChatMessageEventListener`<br>,`LogoutNotificationEventListener`,<br>`NewJoineeNotificationEventListener`|Events|Act as topic listeners (to events) and execute broadcasting logic in the implementation|
-
+|`ChatMessageDecoder`|Decoder|Converts chats sent by users into Java (domain) object which can be used within the application|
+|`DuplicateUserMessageEncoder`<br>,`LogOutMessageEncoder`,<br>`NewJoineeMessageEncoder`,<br>`ReplyEncoder`,<br>`WelcomeMessageEncoder`|Encoder(s)|Converts Java (domain) objects into native (text) payloads which can be sent over the wire using the WebSocket protocol|
 
 ## Try it out
 
